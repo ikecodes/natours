@@ -29,6 +29,7 @@ exports.uploadTourImages = upload.fields([
 // upload.single('photo')- when uploading a single image
 // upload.array('images',7) - when uploadign multiple images
 // upload.fields - for the mix of both
+
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
   // console.log(req.files);
   if (!req.files.imageCover || !req.files.images) return next();
@@ -67,6 +68,24 @@ exports.aliasTopTours = (req, res, next) => {
 };
 
 exports.getAllTours = factory.getAll(Tour);
+
+// exports.getAllTours = catchAsync(async (req, res, next) => {
+//   let queryObj = req.query;
+//   let filterQuery = ['sort', 'fields', 'page', 'limit'];
+
+//   filterQuery.forEach(el => delete queryObj[el]);
+
+//   const tours = await Tour.find(queryObj).sort('-price');
+
+//   res.status(200).json({
+//     message: 'success',
+//     number: tours.length,
+//     data: {
+//       data: tours
+//     }
+//   });
+// });
+
 exports.getTour = factory.getOne(Tour, { path: 'reviews' });
 exports.createTour = factory.createOne(Tour);
 exports.updateTour = factory.updateOne(Tour);

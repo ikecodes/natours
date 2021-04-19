@@ -5,6 +5,7 @@ const User = require('../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const Email = require('./../utils/email');
+const sendEmail = require('./../utils/emailg');
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -22,7 +23,7 @@ const createAndSendToken = (user, statusCode, res) => {
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
   res.cookie('jwt', token, cookieOptions);
-  //REMOVES THE PASWORD FROM THE OUTPUT
+  //REMOVES THE PASSWORD FROM THE OUTPUT
   user.password = undefined;
   res.status(statusCode).json({
     status: 'success',
@@ -43,7 +44,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: req.body.role
   });
   const url = `${req.protocol}://${req.get('host')}/me`;
-  await new Email(newUser, url).sendWelcome();
+  // await new Email(newUser, url).sendWelcome();
   createAndSendToken(newUser, 201, res);
 });
 
@@ -64,9 +65,10 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.logout = (req, res) => {
   res.cookie('jwt', 'loggedout', {
-    expires: new Date(Date.now() + 10 * 1000),
+    expires: new Date(Date.now() + 1 * 1000),
     httpOnly: true
   });
+
   res.status(200).json({
     status: 'success'
   });
@@ -173,7 +175,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     const resetURL = `${req.protocol}://${req.get(
       'host'
     )}/api/v1/users/resetPassword/${resetToken}`;
-    await new Email(user, resetURL).sendPasswordReset();
+    // await new Email(user, resetURL).sendPasswordReset();
+    // console.log(user.email);
+    await sendEmail({
+      email: user.email,
+      subject: 'your password reset token',
+      message: `this is a password reset email sent by Onuorah E. to test his API ${resetURL}`
+    });
 
     res.status(200).json({
       status: 'success',

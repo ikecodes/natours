@@ -12,7 +12,7 @@ process.on('uncaughtException', err => {
 const app = require('./app');
 
 const DB = process.env.DATABASE;
-console.log(app.get('env'));
+// console.log(app.get('env'));
 mongoose
   .connect(DB, {
     useNewUrlParser: true,

@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieparser = require('cookie-parser');
+const compression = require('compression');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -40,6 +41,8 @@ const limiter = rateLimit({
   windowsMs: 60 * 60 * 1000,
   message: 'too many requests from this IP, please try again later'
 });
+
+app.use(compression());
 app.use('/api', limiter);
 
 // body parser, reading data into the body (req.body)
@@ -68,11 +71,10 @@ app.use(
 );
 
 // test middleware
-app.use((req, res, next) => {
-  req.requestTime = new Date().toISOString();
-  // console.log(req.cookies);
-  next();
-});
+// app.use((req, res, next) => {
+//   req.requestTime = new Date().toISOString();
+//   next();
+// });
 
 // 3) ROUTES
 app.use('/', viewRouter);

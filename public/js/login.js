@@ -2,6 +2,29 @@
 import { showAlert } from './alert';
 import axios from 'axios';
 
+export const signup = async (name, email, password, passwordConfirm) => {
+  try {
+    const res = await axios({
+      method: 'POST',
+      url: 'http://localhost:3000/api/v1/users/signup',
+      data: {
+        name,
+        email,
+        password,
+        passwordConfirm
+      }
+    });
+    if (res.data.status === 'success') {
+      showAlert('success', 'you created an account successfully');
+      window.setTimeout(() => {
+        location.assign('/login');
+      }, 1500);
+    }
+  } catch (err) {
+    showAlert('error', err.response.data.message);
+  }
+};
+
 export const login = async (email, password) => {
   try {
     const res = await axios({
@@ -30,7 +53,7 @@ export const logout = async () => {
       url: 'http://localhost:3000/api/v1/users/logout'
     });
     if (res.data.status === 'success')
-      showAlert('success', 'you logged in succesfully');
+      showAlert('success', 'you logged out succesfully');
     window.setTimeout(() => {
       location.assign('/');
     }, 2000);
